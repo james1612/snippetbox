@@ -3,9 +3,14 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+    infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.LUTC)
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.LUTC|log.Lshortfile)
+
+
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
@@ -21,8 +26,16 @@ func main() {
 	mux.HandleFunc("GET /snippet/create", snippetCreate)
 	mux.HandleFunc("POST /snippet/create", snippetCreatePost)
 
-	log.Print("starting server on :4000")
+	infoLog.Printf("Starting server on :9000")
 
-	err := http.ListenAndServe(":4000", mux)
-	log.Fatal(err)
+	srv := &http.Server{
+        Addr:     ":9000",
+        ErrorLog: errorLog,
+        Handler:  mux,
+	}
+
+	srv.ListenAndServe()
+
+	err := http.ListenAndServe(":9000", mux)
+	errorLog.Fatal(err)
 }
