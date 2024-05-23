@@ -6,6 +6,11 @@ import (
 	"os"
 )
 
+type application struct {
+    errorLog *log.Logger
+    infoLog  *log.Logger
+}
+
 func main() {
     infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.LUTC)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.LUTC|log.Lshortfile)
@@ -20,11 +25,17 @@ func main() {
 	// "/static" prefix before the request reaches the file server.
 	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
+	app := &application{
+        errorLog: errorLog,
+        infoLog:  infoLog,
+}
+
+
 	// Register the other application routes as normal..
-	mux.HandleFunc("GET /{$}", home)
-	mux.HandleFunc("GET /snippet/view/{id}", snippetView)
-	mux.HandleFunc("GET /snippet/create", snippetCreate)
-	mux.HandleFunc("POST /snippet/create", snippetCreatePost)
+	mux.HandleFunc("GET /{$}", app.home)
+	mux.HandleFunc("GET /snippet/view/{id}", app.snippetView)
+	mux.HandleFunc("GET /snippet/create", app.snippetCreate)
+	mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
 
 	infoLog.Printf("Starting server on :9000")
 
