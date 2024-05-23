@@ -1,28 +1,28 @@
 package main
 
 import (
-    "log"
-    "net/http"
+	"log"
+	"net/http"
 )
 
 func main() {
-    mux := http.NewServeMux()
+	mux := http.NewServeMux()
 
-    fileServer := http.FileServer(http.Dir("./ui/static/"))
+	fileServer := http.FileServer(http.Dir("./ui/static/"))
 
-    // Use the mux.Handle() function to register the file server as the handler for
-    // all URL paths that start with "/static/". For matching paths, we strip the
-    // "/static" prefix before the request reaches the file server.
-    mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
+	// Use the mux.Handle() function to register the file server as the handler for
+	// all URL paths that start with "/static/". For matching paths, we strip the
+	// "/static" prefix before the request reaches the file server.
+	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
 
-    // Register the other application routes as normal..
-    mux.HandleFunc("GET /{$}", home)
-    mux.HandleFunc("GET /snippet/view/{id}", snippetView)
-    mux.HandleFunc("GET /snippet/create", snippetCreate)
-    mux.HandleFunc("POST /snippet/create", snippetCreatePost)
+	// Register the other application routes as normal..
+	mux.HandleFunc("GET /{$}", home)
+	mux.HandleFunc("GET /snippet/view/{id}", snippetView)
+	mux.HandleFunc("GET /snippet/create", snippetCreate)
+	mux.HandleFunc("POST /snippet/create", snippetCreatePost)
 
-    log.Print("starting server on :4000")
-    
-    err := http.ListenAndServe(":4000", mux)
-    log.Fatal(err)
+	log.Print("starting server on :4000")
+
+	err := http.ListenAndServe(":4000", mux)
+	log.Fatal(err)
 }
