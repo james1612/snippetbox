@@ -10,3 +10,6 @@ run:
 
 fmt:
 	$(GO) fmt ./...
+
+lint:
+	golangci-lint run
