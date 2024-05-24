@@ -21,11 +21,11 @@ func main() {
 	dsn := "root:password@/snippetbox?parseTime=true"
 	db, err := openDB(dsn)
 
-    if err != nil {
-        errorLog.Fatal(err)
+	if err != nil {
+		errorLog.Fatal(err)
 	}
 
-    defer db.Close()
+	defer db.Close()
 
 	app := &application{
 		errorLog: errorLog,
@@ -45,14 +45,14 @@ func main() {
 }
 
 func openDB(dsn string) (*sql.DB, error) {
-    db, err := sql.Open("mysql", dsn)
+	db, err := sql.Open("mysql", dsn)
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    if err = db.Ping(); err != nil {
-        return nil, err
-}
-    return db, nil
+	if err = db.Ping(); err != nil {
+		return nil, err
+	}
+	return db, nil
 }
