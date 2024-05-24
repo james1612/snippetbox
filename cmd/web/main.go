@@ -15,38 +15,19 @@ func main() {
     infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.LUTC)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.LUTC|log.Lshortfile)
 
-
-	mux := http.NewServeMux()
-
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-
-	// Use the mux.Handle() function to register the file server as the handler for
-	// all URL paths that start with "/static/". For matching paths, we strip the
-	// "/static" prefix before the request reaches the file server.
-	mux.Handle("GET /static/", http.StripPrefix("/static", fileServer))
-
 	app := &application{
         errorLog: errorLog,
         infoLog:  infoLog,
-}
-
-
-	// Register the other application routes as normal..
-	mux.HandleFunc("GET /{$}", app.home)
-	mux.HandleFunc("GET /snippet/view/{id}", app.snippetView)
-	mux.HandleFunc("GET /snippet/create", app.snippetCreate)
-	mux.HandleFunc("POST /snippet/create", app.snippetCreatePost)
+	}
 
 	infoLog.Printf("Starting server on :9000")
 
 	srv := &http.Server{
         Addr:     ":9000",
         ErrorLog: errorLog,
-        Handler:  mux,
+        Handler:  app.routes(),
 	}
 
-	srv.ListenAndServe()
-
-	err := http.ListenAndServe(":9000", mux)
+	err := srv.ListenAndServe()
 	errorLog.Fatal(err)
 }
